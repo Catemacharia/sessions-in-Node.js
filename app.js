@@ -10,14 +10,14 @@ const PORT = 4000;
 var session;
 const app = express();
 
-// get our app to use body parser
+// parsing the incoming data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // cookie parser middleware
 app.use(cookieParser());
 
-// serve css styling
+// serving public file
 app.use(express.static(__dirname));
 
 // creating 24 hours from milliseconds
@@ -34,20 +34,17 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  session = req.session;
-  if (session.userid) {
+  if (req.session.userid) {
     res.send("welcome User <a href='/logout'>click to logout</a>");
-  } else res.sendFile("index.html", { root: __dirname });
+  } else res.sendFile("views/index.html", { root: __dirname });
 });
 
 app.post("/user", (req, res) => {
-  if (req.body.username == myusename && req.body.password == mypassword) {
-    session = req.session;
-    session.userid = req.body.username;
-    console.log(req.session);
-    res.send(`Hey there, welcome <a href=\'/logout'>click to logout</a>`);
+  if (req.body.username === myusename && req.body.password === mypassword) {
+    req.session.userid = req.body.username;
+    res.redirect("/");
   } else {
-    res.send("invalid username or password");
+    res.send("Invalid username or password");
   }
 });
 
